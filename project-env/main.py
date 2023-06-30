@@ -13,6 +13,10 @@ ret, frame = cap.read()
 # Convert the frame to grayscale 
 gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
+# Variables for login state
+login_successful = False
+login_attempts = 0
+max_login_attempts = 3
 
 # Loop through the frame to grayscale 
 while True:
@@ -51,6 +55,21 @@ while True:
     # Display the frame
     cv2.imshow('Face and Eye Detection', frame)
 
+     # Check if both a face and eyes are detected
+    if len(faces) > 0 and len(eyes) > 0:
+        login_successful = True
+        break
+
+    # Increment login attempts
+    login_attempts += 1
+
+    # Exit the loop if max login attempts reached
+    if login_attempts >= max_login_attempts:
+        break
+
+    # Display login attempts information
+    print(f"Login attempts: {login_attempts}/{max_login_attempts}")
+
     # Exit the loop if 'q' is pressed
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
@@ -58,3 +77,9 @@ while True:
 # Release the capture and destroy windows 
 cap.release()
 cv2.destroyAllWindows()
+
+# Check login result
+if login_successful:
+    print("Login successful!")
+else:
+    print("Login failed.")
