@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login Result</title>
+</head>
+<body>
+    {% if login_successful %}
+        <h1>Login Successful!</h1>
+        <p>Welcome, {{ username }}!</p>
+        <!-- Add your desired content here -->
+    {% else %}
+        <h1>Login Failed</h1>
+        <p>Invalid username or password.</p>
+    {% endif %}
+</body>
+</html>

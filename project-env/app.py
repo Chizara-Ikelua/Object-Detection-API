@@ -1,4 +1,7 @@
+from flask import Flask, render_template, request, Response
 import cv2
+
+app = Flask(__name__, template_folder='templates')
 
 face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
 
@@ -18,7 +21,37 @@ login_successful = False
 login_attempts = 0
 max_login_attempts = 3
 
-# Loop through the frame to grayscale 
+# Username and password for authentication
+username = "admin"
+password = "password"
+
+# Route for home page
+@app.route('/')
+def home():
+    return render_template('index.html')
+
+# Route for login page
+@app.route('/login', methods=['POST'])
+def login():
+    global login_successful, login_attempts
+
+    # Get the entered username and password from the form
+    entered_username = request.form['username']
+    entered_password = request.form['password']
+
+    # Check if username and password match
+    if entered_username == username and entered_password == password:
+        login_successful = True
+
+    return render_template('result.html', login_successful=login_successful)
+
+    
+#Route for video stream and motion detection
+@app.route('/video_feed')
+def video_feed():
+    def generate_frames():
+        global login_successful, login_attempts
+
 while True:
     # Read the next frame 
     ret, frame = cap.read()
@@ -57,8 +90,14 @@ while True:
 
      # Check if both a face and eyes are detected
     if len(faces) > 0 and len(eyes) > 0:
-        login_successful = True
-        break
+        # Prompt for username and password
+        entered_username = input("Enter username: ")
+        entered_password = input("Enter password: ")
+
+        # Check if username and password match
+        if entered_username == username and entered_password == password:
+            login_successful = True
+            break
 
     # Increment login attempts
     login_attempts += 1
@@ -83,3 +122,6 @@ if login_successful:
     print("Login successful!")
 else:
     print("Login failed.")
+
+if __name__ == '__main__':
+    app.run()
